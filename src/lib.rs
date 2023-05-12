@@ -34,12 +34,12 @@ type ReadBuffer = buffer::ReadBuffer<READ_BUFFER_CHUNK_SIZE>;
 
 pub use crate::{
     error::{Error, Result},
-    protocol::{Message, WebSocket},
+    protocol::{Message, WebSocket, WebSocketConfig},
 };
 
 #[cfg(feature = "handshake")]
 pub use crate::{
-    client::{client, connect},
+    client::{client, connect, connect_with_config},
     handshake::{client::ClientHandshake, server::ServerHandshake, HandshakeError},
     server::{accept, accept_hdr, accept_hdr_with_config, accept_with_config},
 };

@@ -65,7 +65,32 @@ pub fn connect_with_config<Req: IntoClientRequest>(
         #[cfg(not(any(feature = "native-tls", feature = "__rustls-tls")))]
         let client = client_with_config(request, MaybeTlsStream::Plain(stream), config);
         #[cfg(any(feature = "native-tls", feature = "__rustls-tls"))]
-        let client = crate::tls::client_tls_with_config(request, stream, config, None);
+        //let client = crate::tls::client_tls_with_config(request, stream, config, None);
+        let client = {
+            /* Option to load a local trusted certificate
+            use std::fs::File;
+            use std::io::{Read};
+            let mut file = File::open("domain.crt").unwrap();
+            let mut selfsigned = vec![];
+            file.read_to_end(&mut selfsigned).unwrap();
+            builder.add_root_certificate(Certificate::from_pem(selfsigned).unwrap());*/
+            let mut connector = None;
+            if let Some(cfg) = config {
+
+            if cfg.ignore_trusted_cert {
+                let mut builder = native_tls_crate::TlsConnector::builder();
+                builder.danger_accept_invalid_certs(true);
+                builder.danger_accept_invalid_hostnames(true);
+
+                let myconn = builder.build().unwrap();
+                connector = Some(crate::tls::Connector::NativeTls(myconn));
+                //let c = crate::tls::client_tls_with_config(request, stream, config, Some(crate::tls::Connector::NativeTls(connector))/*None*/);
+                //c
+            }
+            }
+                let c = crate::tls::client_tls_with_config(request, stream, config, connector);
+                c
+        };
 
         client.map_err(|e| match e {
             HandshakeError::Failure(f) => f,

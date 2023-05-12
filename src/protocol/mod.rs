@@ -56,6 +56,10 @@ pub struct WebSocketConfig {
     /// some popular libraries that are sending unmasked frames, ignoring the RFC.
     /// By default this option is set to `false`, i.e. according to RFC 6455.
     pub accept_unmasked_frames: bool,
+
+    /// When set to 'true', it is used to connect to a self-signed certificate on the server side.
+    /// By default this option is set to 'false'.
+    pub ignore_trusted_cert: bool,
 }
 
 impl Default for WebSocketConfig {
@@ -65,6 +69,7 @@ impl Default for WebSocketConfig {
             max_message_size: Some(64 << 20),
             max_frame_size: Some(16 << 20),
             accept_unmasked_frames: false,
+            ignore_trusted_cert: false,
         }
     }
 }
